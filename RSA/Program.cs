@@ -13,7 +13,10 @@ namespace RSA
         static void Main(string[] args)
         {
             RSA rsa = new RSA("nothinghere");
-            rsa.GeneratePQ();
+           // rsa.GeneratePQ();
+            long temp = 32452834762618763;
+            System.Console.WriteLine(temp + ((MathAlgs.PrimarilyTestBruteForce(new IntX(temp)))==true ? "is prime": "isnot prime"));
+            System.Console.Read();
         }
     }
 
@@ -80,9 +83,10 @@ namespace RSA
 
         //move all math to different class?
 
+        /**/
         public IntX GenerateCoprime(IntX mod)
         {
-            Random rnd = new Random(Guid.NewGuid().GetHashCode());
+          /*  Random rnd = new Random(Guid.NewGuid().GetHashCode());
             int sizeCurr = sizeof(Int32);
             IntX temp = new IntX(rnd.Next(Int32.MaxValue));
             while (sizeCurr <= _bitsize / 8)
@@ -91,12 +95,17 @@ namespace RSA
                 sizeCurr += sizeof(Int32);
                 System.Console.WriteLine(sizeCurr);
             }
-
+            */
+            return null;
         }
 
         private void GCD(IntX a, IntX b)
         {
-
+            IntX temp = new IntX();
+            while (temp != 1)
+            {
+                
+            }
         }
 
         /// <summary>
@@ -137,6 +146,31 @@ namespace RSA
         {
 
         }
+
+    }
+
+    public static class MathAlgs
+    {
+        public static bool PrimarilyTestBruteForce(IntX number)
+        {
+            if (number <= 2)
+                return false;
+            IntX temp = 3;
+            if (number % 2 == 0)
+                return false;
+            while (temp * temp <= number)
+            {
+                if (number % temp == 0)
+                {
+                    return false;
+                }
+                else
+                    temp += 2;
+            }
+
+            return true;
+        }
+
 
     }
 }
