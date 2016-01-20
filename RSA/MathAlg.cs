@@ -68,5 +68,28 @@ namespace RSA
            }
            return true;
        }
+       public static IntX GCD(IntX a, IntX b)
+       {
+
+
+           IntX _a = a;
+           IntX _b = b;
+
+           if (_a > _b)
+           {
+               IntX temp = _a;
+               _a = _b;
+               _b = temp;
+           }
+
+           while (_b != 0)
+           {
+               IntX temp = _a % _b;
+               _a = _b;
+               _b = temp;
+           }
+
+           return _a;
+       }
     }
 }

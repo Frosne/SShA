@@ -28,8 +28,7 @@ namespace RSA
             stw.Stop();
             System.Console.WriteLine(stw.ElapsedTicks);
             */
-
-            
+            System.Console.WriteLine(MathAlgs.GCD(new IntX("284612834525939"), new IntX("161529830970143030971931")));
             System.Console.Read();
         }
     }
@@ -115,17 +114,7 @@ namespace RSA
             return null;
         }
 
-        private void GCD(IntX a, IntX b)
-        {
-            IntX _a= a;
-            IntX _b = b;
-            while (_b!=0)
-            {
-                IntX temp = _a % _b;
-                _a = _b;
-                _b = temp;
-            }
-        }
+      
 
         /// <summary>
         /// Takes as input securitylevel and generated number and checks if it's appropriate 
