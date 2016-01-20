@@ -16,18 +16,20 @@ namespace RSA
         {
             RSA rsa = new RSA("nothinghere");
             // rsa.GeneratePQ();
-            long temp = 32452834762618763;
+           /*long temp = 32452834762618213;
             Stopwatch stw = new Stopwatch();
             stw.Start();
-            System.Console.WriteLine(temp + ((MathAlgs.PrimarilyTestBruteForceIncreased(new IntX(temp))) == true ? "is prime" : "isnot prime"));
-            stw.Stop();
-            System.Console.WriteLine(stw.ElapsedTicks);
-
-            stw.Restart();
             System.Console.WriteLine(temp + ((MathAlgs.PrimarilyTestBruteForce(new IntX(temp))) == true ? "is prime" : "isnot prime"));
             stw.Stop();
             System.Console.WriteLine(stw.ElapsedTicks);
 
+            stw.Restart();
+            System.Console.WriteLine(temp + ((MathAlgs.PrimarilyTestBruteForceIncreased(new IntX(temp))) == true ? "is prime" : "isnot prime"));
+            stw.Stop();
+            System.Console.WriteLine(stw.ElapsedTicks);
+            */
+
+            
             System.Console.Read();
         }
     }
@@ -115,10 +117,13 @@ namespace RSA
 
         private void GCD(IntX a, IntX b)
         {
-            IntX temp = new IntX();
-            while (temp != 1)
+            IntX _a= a;
+            IntX _b = b;
+            while (_b!=0)
             {
-
+                IntX temp = _a % _b;
+                _a = _b;
+                _b = temp;
             }
         }
 
@@ -163,66 +168,5 @@ namespace RSA
 
     }
 
-    public static class MathAlgs
-    {
-        public static bool PrimarilyTestBruteForce(IntX number)
-        {
-            if (number <= 2)
-                return false;
-            IntX temp = 3;
-            if (number % 2 == 0)
-                return false;
-            while (temp * temp <= number)
-            {
-                if (number % temp == 0)
-                {
-                    return false;
-                }
-                else
-                    temp += 2;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="lst"></param>
-        /// <param name="elem"></param>
-        /// <returns>false if the one of the elements is divisible by the elements existing in array; else true</returns>
-        public static bool ListSearch(List<IntX> lst, IntX elem)
-        {
-            foreach (var _elemLst in lst)
-            {
-                if (elem % _elemLst == 0)
-                    return false;
-            }
-            return true;
-        }
-        public static bool PrimarilyTestBruteForceIncreased(IntX number)
-        {
-            if (number <= 2)
-                return false;
-            List<IntX> _tempList = new List<IntX>();
-            IntX temp = new IntX(3);
-            if (number % 2 == 0)
-                return false;
-            while (temp * temp <= number)
-            {
-                if (number % temp == 0)
-                    return false;
-                else
-                {
-                    _tempList.Add(temp);
-                    do
-                    {
-                        temp += 2;
-                    }
-                    while (!ListSearch(_tempList, temp));
-                }
-            }
-            return true;
-        }
-    }
+    
 }
