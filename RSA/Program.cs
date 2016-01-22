@@ -26,7 +26,7 @@ namespace RSA
     class RSA
     {
         //how crucial it will be to leave it public ?
-        private int bitsize;
+        public int bitsize;
         public int securityLevel;
         public IntX p;
         public IntX q;

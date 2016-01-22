@@ -10,7 +10,7 @@ namespace RSA
     {
         public void HelperMain()
         {
-            RSA rsa = new RSA("nothing here");
+            RSA rsa = new RSA("sfsdf",30);
 
             while (true)
             {
@@ -26,12 +26,13 @@ namespace RSA
         {
             if (command.Contains("generate p"))
             {
+                System.Console.WriteLine(entity.bitsize);
                 entity.GeneratePQ();
                 System.Console.WriteLine(entity.p);
                 System.Console.WriteLine(entity.q);
             }
 
-            else if (command.Contains("compute n"))
+            else if (command.Contains("compute modulo n"))
             {
                 if (!CheckParameters(ref entity, command))
                 {
@@ -92,7 +93,7 @@ namespace RSA
 
         private bool CheckParameters(ref RSA entity, string command)
         {
-            if (command.Contains("n") || command.Contains("phi"))
+            if (command.Contains("modulo") || command.Contains("phi"))
             {
                 if (entity.p == null)
                 {
@@ -100,11 +101,12 @@ namespace RSA
                     entity.GeneratePQ();
                     return false;
                 }
+                return true;
             }
 
             if (command.Contains("e"))
             {
-                if (!CheckParameters(ref entity, "n"))
+                if (!CheckParameters(ref entity, "modulo"))
                     CheckParameters(ref entity, command);
                 else
                 {
