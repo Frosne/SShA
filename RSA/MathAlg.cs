@@ -92,7 +92,6 @@ namespace RSA
             {
                 temp = (temp << 32) + rnd.Next(Int32.MaxValue);
                 sizeCurr += sizeof(Int32);
-                System.Console.WriteLine(sizeCurr);
             }
 
             while (!IsPrime(temp))
@@ -165,6 +164,18 @@ namespace RSA
                 pos = !pos;
             }
             return pos ? old : (mod - old);
+        }
+
+        public static IntX Multiplication(IntX number, IntX pow, IntX mod)
+        {
+            IntX temp = number;
+            IntX _pow = pow-1;
+            while (_pow != 0)
+            {
+                IntX.Modulo(IntX.Multiply(temp, number, MultiplyMode.Classic), mod, DivideMode.Classic);
+                _pow-=1;
+            }
+            return temp;
         }
 
         public static void Test()

@@ -14,20 +14,14 @@ namespace RSA
     {
         static void Main(string[] args)
         {
-           /* RSA rsa = new RSA("nothinghere",20);
-            rsa.GeneratePQ();
-            rsa.GenerateN();
-            rsa.GeneratePhi();
-            rsa.GenerateE();
-            System.Console.WriteLine(rsa.p + "\n" + rsa.q + "\n" + rsa.n + "\n" +rsa.Phi + "\n" + rsa.e);
-            * */
-
-            MathAlgs.Test();
-            System.Console.Read();
+            Helper hp = new Helper();
+            hp.HelperMain();
             
 
         }
     }
+
+    
 
     class RSA
     {
@@ -38,11 +32,17 @@ namespace RSA
         public IntX q;
         public IntX Phi;
         public IntX e;
+        public IntX d;
+
 
         public IntX n;
 
-        private string PMessage;
         public string CMessage;
+        public IntX CDMessage;
+        public string DMessage;
+        public IntX DDMessage;
+        public IntX Result;
+
 
         public RSA(string message)
             : this(message, 2048)
@@ -54,15 +54,18 @@ namespace RSA
 
         public RSA(string message, int bitsize, int securityLevel)
         {
-            this.PMessage = message;
+            this.CMessage = message;
             this.bitsize = bitsize;
             this.securityLevel = securityLevel;
         }
+
+        
 
         public void GeneratePQ()
         {
             p = MathAlgs.GeneratePrime(this.bitsize);
             q = MathAlgs.GeneratePrime(this.bitsize);
+
         }
 
 
@@ -79,19 +82,35 @@ namespace RSA
         public void GenerateE()
         {
             this.e = MathAlgs.GenerateCoprime(this.Phi,this.bitsize/2);
+            this.d = MathAlgs.GenerateInverse(this.e, this.n);
 
         }
 
         public void CipherMessage(string message = null)
         {
-            int test = 34;
+          
+
+           this.CDMessage =  IntX.Parse(this.CMessage);
+           this.DDMessage= MathAlgs.Multiplication(this.CDMessage, this.e, this.n);
+
         }
 
         public void DecipherMessage(string message = null)
         {
-
+           this.DDMessage =  this.DDMessage != null ? this.DDMessage : IntX.Parse(this.DMessage);
+            this.Result = MathAlgs.Multiplication(this.DDMessage, this.d, this.n);
         }
 
+
+        internal void GetCMessage(string message)
+        {
+            this.CMessage = message;
+        }
+
+        internal void GetDMessage(string message)
+        {
+            this.DMessage = message;
+        }
     }
 
     
