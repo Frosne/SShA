@@ -14,22 +14,18 @@ namespace RSA
     {
         static void Main(string[] args)
         {
-            RSA rsa = new RSA("nothinghere");
-            // rsa.GeneratePQ();
-           /*long temp = 32452834762618213;
-            Stopwatch stw = new Stopwatch();
-            stw.Start();
-            System.Console.WriteLine(temp + ((MathAlgs.PrimarilyTestBruteForce(new IntX(temp))) == true ? "is prime" : "isnot prime"));
-            stw.Stop();
-            System.Console.WriteLine(stw.ElapsedTicks);
+           /* RSA rsa = new RSA("nothinghere",20);
+            rsa.GeneratePQ();
+            rsa.GenerateN();
+            rsa.GeneratePhi();
+            rsa.GenerateE();
+            System.Console.WriteLine(rsa.p + "\n" + rsa.q + "\n" + rsa.n + "\n" +rsa.Phi + "\n" + rsa.e);
+            * */
 
-            stw.Restart();
-            System.Console.WriteLine(temp + ((MathAlgs.PrimarilyTestBruteForceIncreased(new IntX(temp))) == true ? "is prime" : "isnot prime"));
-            stw.Stop();
-            System.Console.WriteLine(stw.ElapsedTicks);
-            */
-            System.Console.WriteLine(MathAlgs.GCD(new IntX("284612834525939"), new IntX("161529830970143030971931")));
+            MathAlgs.Test();
             System.Console.Read();
+            
+
         }
     }
 
@@ -38,9 +34,9 @@ namespace RSA
         //how crucial it will be to leave it public ?
         private int bitsize;
         public int securityLevel;
-        private IntX p;
-        private IntX q;
-        private IntX Phi;
+        public IntX p;
+        public IntX q;
+        public IntX Phi;
         public IntX e;
 
         public IntX n;
@@ -53,7 +49,7 @@ namespace RSA
         { }
 
         public RSA(string message, int bitsize)
-            : this(message, 2048, 0)
+            : this(message, bitsize, 0)
         { }
 
         public RSA(string message, int bitsize, int securityLevel)
@@ -65,89 +61,30 @@ namespace RSA
 
         public void GeneratePQ()
         {
-            p = GeneratePrime();
-            q = GeneratePrime();
+            p = MathAlgs.GeneratePrime(this.bitsize);
+            q = MathAlgs.GeneratePrime(this.bitsize);
         }
 
-        /*Secured?*/
-        public IntX GeneratePrime(IntX maximum)
-        {
-            return this.GeneratePrime(maximum.ToString(2).Length - 1);
-        }
 
-        public IntX GeneratePrime(int bitsize = 0)
-        {
-            Random rnd = new Random(Guid.NewGuid().GetHashCode());
-            int sizeCurr = sizeof(Int32);
-            IntX temp = new IntX(rnd.Next(Int32.MaxValue));
-            int _bitsize = bitsize == 0 ? this.bitsize : bitsize;
-            while (sizeCurr <= _bitsize / 8)
-            {
-                temp = (temp << 32) + rnd.Next(Int32.MaxValue);
-                sizeCurr += sizeof(Int32);
-                System.Console.WriteLine(sizeCurr);
-            }
-
-            while (!ifNumberPrime(temp))
-            {
-                temp += 2;
-            }
-            //what's better to regenerate prime if it's appropiate or just like add 2?
-            return temp;
-        }
-
-        //move all math to different class?
-
-        /**/
-        public IntX GenerateCoprime(IntX mod)
-        {
-            /*  Random rnd = new Random(Guid.NewGuid().GetHashCode());
-              int sizeCurr = sizeof(Int32);
-              IntX temp = new IntX(rnd.Next(Int32.MaxValue));
-              while (sizeCurr <= _bitsize / 8)
-              {
-                  temp = (temp << 32) + rnd.Next(Int32.MaxValue);
-                  sizeCurr += sizeof(Int32);
-                  System.Console.WriteLine(sizeCurr);
-              }
-              */
-            return null;
-        }
-
-      
-
-        /// <summary>
-        /// Takes as input securitylevel and generated number and checks if it's appropriate 
-        /// according to security level
-        /// the idea is to distinguish strong primes/rsa primes
-        /// + the difference in generation
-        /// and write documentation
-        /// </summary>
-        /// <param name="temp"></param>
-        /// <returns></returns>
-        private bool ifNumberPrime(IntX temp)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void GenerateN()
+        public void GenerateN()
         {
             this.n = this.p * this.q;
         }
 
-        private void GeneratePhi()
+        public void GeneratePhi()
         {
             this.Phi = (this.p - 1) * (this.q - 1);
         }
 
-        private void ComputeE()
+        public void GenerateE()
         {
+            this.e = MathAlgs.GenerateCoprime(this.Phi,this.bitsize/2);
 
         }
 
         public void CipherMessage(string message = null)
         {
-
+            int test = 34;
         }
 
         public void DecipherMessage(string message = null)
