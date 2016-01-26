@@ -14,9 +14,7 @@ namespace RSA
     {
         static void Main(string[] args)
         {
-            Helper hp = new Helper();
-            hp.HelperMain();
-            
+            MathAlgs.Test();
 
         }
     }
@@ -82,7 +80,7 @@ namespace RSA
         public void GenerateE()
         {
             this.e = MathAlgs.GenerateCoprime(this.Phi,this.bitsize/2);
-            this.d = MathAlgs.GenerateInverse(this.e, this.n);
+            this.d = MathAlgs.GenerateInverse(this.e, this.Phi);
 
         }
 

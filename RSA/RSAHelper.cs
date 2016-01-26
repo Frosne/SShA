@@ -10,7 +10,7 @@ namespace RSA
     {
         public void HelperMain()
         {
-            RSA rsa = new RSA("sfsdf",30);
+            RSA rsa = new RSA("34",10);
 
             while (true)
             {
@@ -62,7 +62,10 @@ namespace RSA
 
                 entity.GenerateE();
                 System.Console.WriteLine(entity.e);
+                System.Console.WriteLine(entity.d);
             }
+
+          
 
 
             else if (command.Contains("!cipher"))
@@ -85,7 +88,28 @@ namespace RSA
                 }
 
                 entity.DecipherMessage();
-                System.Console.WriteLine(entity.Result);
+                System.Console.WriteLine("The message is {0}", entity.Result);
+            }
+
+            else if (command.Contains("show phi"))
+            {
+                System.Console.WriteLine("phi - {0}", entity.Phi != null ? entity.Phi.ToString() : "null");
+            }
+
+            else if (command.Contains("show p") || command.Contains("show q"))
+            {
+                System.Console.WriteLine("p - {0}, q - {1}", entity.p!=null ? entity.p.ToString() : "null", entity.q!=null ? entity.q.ToString() : "null" );
+            }
+            else if (command.Contains("show n"))
+            {
+                System.Console.WriteLine("n - {0}", entity.n != null ? entity.n.ToString() : "null");
+            }
+
+          
+
+            else if (command.Contains("show e"))
+            {
+                System.Console.WriteLine("e - {0}, d - {1}", entity.e != null ? entity.e.ToString() : "null", entity.d != null ? entity.d.ToString() : "null");
             }
 
 
@@ -99,10 +123,12 @@ namespace RSA
                 {
                     System.Console.WriteLine("p and q are not done");
                     entity.GeneratePQ();
+                    this.CommandParse("show p",ref entity);
                     return false;
                 }
                 return true;
             }
+
 
             if (command.Contains("e"))
             {
@@ -114,15 +140,26 @@ namespace RSA
                     {
                         System.Console.WriteLine("Phi is not done");
                         entity.GeneratePhi();
+                        this.CommandParse("phi", ref entity);
                         return false;
                     }
+
+                    if (entity.n == null)
+                    {
+                        System.Console.WriteLine("N is not done");
+                        entity.GenerateN();
+                        this.CommandParse("show n", ref entity);
+                        return false;
+                    }
+
+                    return true;
                 }
 
             }
 
             if (command.Contains("d"))
             {
-                if (!CheckParameters(ref entity, "e"))
+                if (!CheckParameters(ref entity, "compute e"))
                     CheckParameters(ref entity, command);
                 else
                 {
@@ -130,8 +167,11 @@ namespace RSA
                     {
                         System.Console.WriteLine("E is not done");
                         entity.GenerateE();
+                        this.CommandParse("show e", ref entity);
                         return false;
                     }
+
+                    return true;
                 }
             }
 
@@ -147,6 +187,10 @@ namespace RSA
                         string message = System.Console.ReadLine();
                         entity.GetCMessage(message);
                     }
+
+                        entity.CipherMessage();
+                        System.Console.WriteLine("Ciphered message  - {0} ", entity.DDMessage);
+                    
                 }
             }
 
@@ -164,6 +208,11 @@ namespace RSA
                         entity.GetDMessage(message);
 
                     }
+
+                    entity.DecipherMessage();
+                    System.Console.WriteLine("Decipher message - {0}", entity.Result);
+
+                    
                 }
             }
 

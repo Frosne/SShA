@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using IntXLib;
+using System.Collections;
 
 
 namespace RSA
@@ -172,20 +174,69 @@ namespace RSA
             IntX _pow = pow-1;
             while (_pow != 0)
             {
-                IntX.Modulo(IntX.Multiply(temp, number, MultiplyMode.Classic), mod, DivideMode.Classic);
+                temp = IntX.Multiply(temp, number, MultiplyMode.Classic);
+                temp =  IntX.Modulo(temp, mod, DivideMode.Classic);
                 _pow-=1;
             }
             return temp;
+        }
+
+        public static IntX MultiplicationSq(IntX number, IntX pow, IntX mod)
+        {
+            if (pow == 0)
+                return 1; 
+            BitArray br = GenerateBitArray(pow);
+            IntX s = number;
+            for (int i = 1; i <= br.Length-1; i++)
+            {
+                s = IntX.Multiply(s, s, MultiplyMode.Classic);
+                s = IntX.Modulo(s, mod, DivideMode.Classic);
+                if (br[i])
+                {
+                    s = IntX.Multiply(s, number, MultiplyMode.Classic);
+                    s = IntX.Modulo(s, mod, DivideMode.Classic);
+                }
+            }
+            return s;
+        }
+
+        public static BitArray GenerateBitArray(IntX number)
+        {
+            string numberBinary = number.ToString(2);
+            BitArray br = new BitArray(numberBinary.Length);
+            for (int i = 0; i < br.Length; i++)
+            {
+                if (numberBinary[i] == '1')
+                    br[i] = true;
+            }
+            return br;
+        }
+        public static int FindClosestPow(IntX number)
+        {
+            if (number == 1)
+                return 0;                
+            IntX _temp = 2;
+            int power = 1;
+            while (_temp <= number)
+            {
+                _temp = IntX.Multiply(_temp, 2, MultiplyMode.Classic);
+                power++;
+            }
+
+            return power; 
         }
 
         public static void Test()
         {
             // System.Console.WriteLine(MathAlgs.GCD(new IntX("284612834525939"), new IntX("161529830970143030971931")));
             //System.Console.WriteLine(MathAlgs.GenerateCoprime(1257957, 13));
-            System.Console.WriteLine(MathAlgs.GenerateInverse(33, 1009));
+            //System.Console.WriteLine(MathAlgs.GenerateInverse(33, 1009));
+            //System.Console.WriteLine(FindClosestPow(1025));
+            //System.Console.WriteLine(GenerateBitArray(1024));
 
+            for (int i = 0; i<256; i++)
+                System.Console.WriteLine("2^{0} = {1}",i,MathAlgs.MultiplicationSq(2, i, 23232));
             System.Console.Read();
         }
-
     }
 }
