@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using IntXLib;
+﻿using IntXLib;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 
 
 namespace RSA
@@ -211,6 +207,7 @@ namespace RSA
             }
             return br;
         }
+
         public static int FindClosestPow(IntX number)
         {
             if (number == 1)
@@ -230,13 +227,14 @@ namespace RSA
         {
             // System.Console.WriteLine(MathAlgs.GCD(new IntX("284612834525939"), new IntX("161529830970143030971931")));
             //System.Console.WriteLine(MathAlgs.GenerateCoprime(1257957, 13));
-            //System.Console.WriteLine(MathAlgs.GenerateInverse(33, 1009));
+            System.Console.WriteLine(MathAlgs.GenerateInverse(447, 235716571963));
             //System.Console.WriteLine(FindClosestPow(1025));
             //System.Console.WriteLine(GenerateBitArray(1024));
 
-            for (int i = 0; i<256; i++)
-                System.Console.WriteLine("2^{0} = {1}",i,MathAlgs.MultiplicationSq(2, i, 23232));
-            System.Console.Read();
+
+            //for (int i = 0; i<256; i++)
+            //    System.Console.WriteLine("2^{0} = {1}",i,MathAlgs.MultiplicationSq(2, i, 23232));
+            //System.Console.Read();
         }
     }
 }

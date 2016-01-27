@@ -6,20 +6,22 @@ using System.Threading.Tasks;
 
 namespace RSA
 {
+    enum MultiplicationDifficulty { Usual = 1, Squared = 2 };
     class Helper
     {
+        RSA rsa = null;
+
         public void HelperMain()
         {
-            RSA rsa = new RSA("34",10);
-
-            while (true)
+            rsa = new RSA("34", 20);
+            string command;
+            do
             {
                 System.Console.WriteLine(">...");
-                string command = System.Console.ReadLine();
+                command = System.Console.ReadLine();
                 CommandParse(command, ref rsa);
-
             }
-
+            while (!(command.Contains("quit") || command.Contains("exit")));
         }
 
         private void CommandParse(string command, ref RSA entity)
@@ -65,8 +67,26 @@ namespace RSA
                 System.Console.WriteLine(entity.d);
             }
 
-          
 
+            else if (command.Contains("!cipher debug"))
+            {
+                if (!CheckParameters(ref entity, command))
+                {
+                    CommandParse(command, ref entity);
+                }
+
+                System.Diagnostics.Stopwatch stw = new System.Diagnostics.Stopwatch();
+                stw.Start();
+                entity.CipherMessageDebug(((int)MultiplicationDifficulty.Usual));
+                stw.Stop();
+                System.Console.WriteLine("Ciphering the message for {0} with mode {1} bits took {2}", MultiplicationDifficulty.Usual.ToString(), entity.bitsize, stw.ElapsedTicks);
+               
+                stw.Restart();
+                entity.CipherMessageDebug(((int)MultiplicationDifficulty.Squared));
+                stw.Stop();
+                System.Console.WriteLine("Ciphering the message for {0} with mode {1} bits took {2}", MultiplicationDifficulty.Squared.ToString(), entity.bitsize, stw.ElapsedTicks);
+                System.Console.WriteLine(entity.DDMessage);
+            }
 
             else if (command.Contains("!cipher"))
             {
@@ -78,6 +98,26 @@ namespace RSA
                 entity.CipherMessage();
                 System.Console.WriteLine(entity.DDMessage);
 
+            }
+
+            else if (command.Contains("decipher debug"))
+            {
+                if (!CheckParameters(ref entity, command))
+                {
+                    CommandParse(command, ref entity);
+                }
+
+                System.Diagnostics.Stopwatch stw = new System.Diagnostics.Stopwatch();
+                /*stw.Start();
+                entity.DecipherMessageDebug(((int)MultiplicationDifficulty.Usual));
+                stw.Stop();
+                System.Console.WriteLine("Deciphering the message for {0} with mode {1} bits took {2}", MultiplicationDifficulty.Usual.ToString(), entity.bitsize, stw.ElapsedTicks);
+               */
+                stw.Restart();
+                entity.DecipherMessageDebug(((int)MultiplicationDifficulty.Squared));
+                stw.Stop();
+                System.Console.WriteLine("Deciphering the message for {0} with mode {1} bits took {2}", MultiplicationDifficulty.Squared.ToString(), entity.bitsize, stw.ElapsedTicks);
+                System.Console.WriteLine("The message is {0}", entity.Result);
             }
 
             else if (command.Contains("decipher"))
@@ -98,19 +138,20 @@ namespace RSA
 
             else if (command.Contains("show p") || command.Contains("show q"))
             {
-                System.Console.WriteLine("p - {0}, q - {1}", entity.p!=null ? entity.p.ToString() : "null", entity.q!=null ? entity.q.ToString() : "null" );
+                System.Console.WriteLine("p - {0}, q - {1}", entity.p != null ? entity.p.ToString() : "null", entity.q != null ? entity.q.ToString() : "null");
             }
             else if (command.Contains("show n"))
             {
                 System.Console.WriteLine("n - {0}", entity.n != null ? entity.n.ToString() : "null");
             }
 
-          
+
 
             else if (command.Contains("show e"))
             {
                 System.Console.WriteLine("e - {0}, d - {1}", entity.e != null ? entity.e.ToString() : "null", entity.d != null ? entity.d.ToString() : "null");
             }
+
 
 
         }
@@ -123,7 +164,7 @@ namespace RSA
                 {
                     System.Console.WriteLine("p and q are not done");
                     entity.GeneratePQ();
-                    this.CommandParse("show p",ref entity);
+                    this.CommandParse("show p", ref entity);
                     return false;
                 }
                 return true;
@@ -188,9 +229,9 @@ namespace RSA
                         entity.GetCMessage(message);
                     }
 
-                        entity.CipherMessage();
-                        System.Console.WriteLine("Ciphered message  - {0} ", entity.DDMessage);
-                    
+                    entity.CipherMessage();
+                    System.Console.WriteLine("Ciphered message  - {0} ", entity.DDMessage);
+
                 }
             }
 
@@ -212,11 +253,16 @@ namespace RSA
                     entity.DecipherMessage();
                     System.Console.WriteLine("Decipher message - {0}", entity.Result);
 
-                    
+
                 }
             }
 
             return true;
+        }
+
+        public void ReturnEntity(out RSA entity)
+        {
+            entity = rsa;
         }
     }
 }

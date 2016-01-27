@@ -14,8 +14,12 @@ namespace RSA
     {
         static void Main(string[] args)
         {
-            MathAlgs.Test();
+            RSA rsa = new RSA("34", 20);
+            rsa.CipherFullGeneration();
 
+            rsa.CRTAlgorithmPrecomputing(rsa.d, rsa.p, rsa.q);
+            
+           
         }
     }
 
@@ -84,19 +88,47 @@ namespace RSA
 
         }
 
+        public void CipherFullGeneration(string message = null)
+        {
+            this.CDMessage = IntX.Parse(this.CMessage);
+            this.GeneratePQ();
+            this.GenerateN();
+            this.GeneratePhi();
+            this.GenerateE();
+            this.CipherMessage(message);
+        }
+
         public void CipherMessage(string message = null)
         {
-          
-
            this.CDMessage =  IntX.Parse(this.CMessage);
-           this.DDMessage= MathAlgs.Multiplication(this.CDMessage, this.e, this.n);
+          // this.DDMessage= MathAlgs.Multiplication(this.CDMessage, this.e, this.n);
+           this.DDMessage = MathAlgs.MultiplicationSq(this.CDMessage, this.e, this.n);
+        }
 
+
+        public void CipherMessageDebug(int mode)
+        {
+            this.CDMessage = IntX.Parse(this.CMessage);
+            if (mode == 1)
+                this.DDMessage= MathAlgs.Multiplication(this.CDMessage, this.e, this.n);
+            else if (mode == 2)
+                 this.DDMessage = MathAlgs.MultiplicationSq(this.CDMessage, this.e, this.n);
         }
 
         public void DecipherMessage(string message = null)
         {
            this.DDMessage =  this.DDMessage != null ? this.DDMessage : IntX.Parse(this.DMessage);
-            this.Result = MathAlgs.Multiplication(this.DDMessage, this.d, this.n);
+           this.Result = MathAlgs.MultiplicationSq(this.DDMessage, this.d, this.n);
+        }
+
+        public void DecipherMessageDebug(int mode)
+        {
+            this.DDMessage = this.DDMessage != null ? this.DDMessage : IntX.Parse(this.DMessage);
+            if (mode == 1)
+                this.Result = MathAlgs.Multiplication(this.DDMessage, this.d, this.n);
+            else if (mode == 2)
+                this.Result = MathAlgs.MultiplicationSq(this.DDMessage, this.d, this.n);
+
         }
 
 
@@ -108,6 +140,35 @@ namespace RSA
         internal void GetDMessage(string message)
         {
             this.DMessage = message;
+        }
+
+        public void CRTAlgorithm(IntX Ciphered, IntX d, IntX N, IntX p, IntX q)
+        {
+            this.CRTAlgorithmPrecomputing(this.d, this.p, this.q);
+        }
+
+        public List<IntX> CRTAlgorithmPrecomputing(IntX d, IntX p, IntX q)
+        {
+            IntX dp = IntX.Modulo(d, new IntX(p - 1), DivideMode.Classic);
+            IntX dq = IntX.Modulo(d, new IntX(q - 1), DivideMode.Classic);
+            IntX a = 1;
+            IntX b = 1;
+
+            while (!((a % q) == 0))            
+                a += p;   
+            
+            while (!(b % p == 0))
+                b += q;
+           
+
+            List<IntX> lst = new List<IntX>();
+            lst.Add(dp);
+            lst.Add(dq);
+            lst.Add(a);
+            lst.Add(b);
+
+            return lst;
+
         }
     }
 
