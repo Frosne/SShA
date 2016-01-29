@@ -166,13 +166,18 @@ namespace RSA
 
         public static IntX Multiplication(IntX number, IntX pow, IntX mod)
         {
+            return MathAlgs.MultiplicationSq(number, pow, mod);
+        }
+
+        public static IntX MultiplicationBruteForce(IntX number, IntX pow, IntX mod)
+        {
             IntX temp = number;
-            IntX _pow = pow-1;
+            IntX _pow = pow - 1;
             while (_pow != 0)
             {
                 temp = IntX.Multiply(temp, number, MultiplyMode.Classic);
-                temp =  IntX.Modulo(temp, mod, DivideMode.Classic);
-                _pow-=1;
+                temp = IntX.Modulo(temp, mod, DivideMode.Classic);
+                _pow -= 1;
             }
             return temp;
         }
@@ -223,6 +228,12 @@ namespace RSA
             return power; 
         }
 
+        public static IntX Modulo(IntX number, IntX mod)
+        {
+            IntX div = number / mod;
+            return number - mod * div;
+        }
+
         public static void Test()
         {
             // System.Console.WriteLine(MathAlgs.GCD(new IntX("284612834525939"), new IntX("161529830970143030971931")));
@@ -230,6 +241,7 @@ namespace RSA
             System.Console.WriteLine(MathAlgs.GenerateInverse(447, 235716571963));
             //System.Console.WriteLine(FindClosestPow(1025));
             //System.Console.WriteLine(GenerateBitArray(1024));
+            System.Console.WriteLine(Modulo(new IntX("15234723423412423423541203958230532402394234888888888823423059812904184290189421204124927349293152347234234124234235412039582305324023942348888888888234230598129041842901894212041249273492935623852351"), 47342342));
 
 
             //for (int i = 0; i<256; i++)

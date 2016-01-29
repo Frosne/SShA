@@ -14,10 +14,10 @@ namespace RSA
     {
         static void Main(string[] args)
         {
-            RSA rsa = new RSA("34", 20);
-            rsa.CipherFullGeneration();
+            Helper hlr = new Helper();
+            hlr.HelperMain();
 
-            rsa.CRTAlgorithmPrecomputing(rsa.d, rsa.p, rsa.q);
+            System.Console.Read();
             
            
         }
@@ -118,7 +118,20 @@ namespace RSA
         public void DecipherMessage(string message = null)
         {
            this.DDMessage =  this.DDMessage != null ? this.DDMessage : IntX.Parse(this.DMessage);
-           this.Result = MathAlgs.MultiplicationSq(this.DDMessage, this.d, this.n);
+           this.Result = DecipherMessageMultiplication(); 
+           System.Console.WriteLine("Deciphered message {0}",this.Result);
+           this.Result = DecipherMessageCRT();
+           System.Console.WriteLine("Deciphered message {0}", this.Result);
+        }
+
+        public IntX DecipherMessageMultiplication()
+        {
+            return MathAlgs.MultiplicationSq(this.DDMessage, this.d, this.n);
+        }
+
+        public IntX DecipherMessageCRT()
+        {
+            return this.CRTAlgorithm(this.DDMessage, this.d, this.n, this.p, this.q);
         }
 
         public void DecipherMessageDebug(int mode)
@@ -142,11 +155,39 @@ namespace RSA
             this.DMessage = message;
         }
 
-        public void CRTAlgorithm(IntX Ciphered, IntX d, IntX N, IntX p, IntX q)
+        public IntX CRTAlgorithm(IntX Ciphered, IntX d, IntX N, IntX p, IntX q)
         {
-            this.CRTAlgorithmPrecomputing(this.d, this.p, this.q);
-        }
+            List<IntX> lst = this.CRTAlgorithmPrecomputing(this.d, this.p, this.q);
+            IntX dp = 1, dq = 1, a = 1, b = 1;
+            try
+            {
+                dp = lst[0];
+                dq = lst[1];
+                a = lst[2];
+                b = lst[3];
+            }
+            catch (Exception exp)
+            {
+                System.Console.WriteLine("Some problems during generation pre parameters");
+            }
 
+            IntX Cp = IntX.Modulo(Ciphered, p, DivideMode.Classic);
+            IntX Cq = IntX.Modulo(Ciphered, q, DivideMode.Classic);
+
+            IntX Xp = MathAlgs.Multiplication(Cp, dp, p);
+            IntX Xq = MathAlgs.Multiplication(Cq, dq, q);
+
+            IntX result = IntX.Modulo((a * Xp + b * Xq), n, DivideMode.Classic);
+            return result;
+        }
+      
+        /// <summary>
+        /// Compute dp, dq, a and b for CRT algorithm
+        /// </summary>
+        /// <param name="d">private key</param>
+        /// <param name="p">prime p</param>
+        /// <param name="q">prime q</param>
+        /// <returns>List<IntX> where the first element in list is dp, the second element is dq, followed by a and b</returns>
         public List<IntX> CRTAlgorithmPrecomputing(IntX d, IntX p, IntX q)
         {
             IntX dp = IntX.Modulo(d, new IntX(p - 1), DivideMode.Classic);
@@ -158,8 +199,7 @@ namespace RSA
                 a += p;   
             
             while (!(b % p == 0))
-                b += q;
-           
+                b += q;           
 
             List<IntX> lst = new List<IntX>();
             lst.Add(dp);

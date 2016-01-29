@@ -26,6 +26,14 @@ namespace RSA
 
         private void CommandParse(string command, ref RSA entity)
         {
+
+            if (command.Contains("library test"))
+            {
+                MathAlgs.Test();
+                return;
+            }
+
+
             if (command.Contains("generate p"))
             {
                 System.Console.WriteLine(entity.bitsize);
@@ -158,6 +166,9 @@ namespace RSA
 
         private bool CheckParameters(ref RSA entity, string command)
         {
+            
+            
+
             if (command.Contains("modulo") || command.Contains("phi"))
             {
                 if (entity.p == null)
