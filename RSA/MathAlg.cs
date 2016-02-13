@@ -185,10 +185,10 @@ namespace RSA
         public static IntX MultiplicationSq(IntX number, IntX pow, IntX mod)
         {
             if (pow == 0)
-                return 1; 
+                return 1;
             BitArray br = GenerateBitArray(pow);
             IntX s = number;
-            for (int i = 1; i <= br.Length-1; i++)
+            for (int i = 1; i <= br.Length - 1; i++)
             {
                 s = IntX.Multiply(s, s, MultiplyMode.Classic);
                 s = IntX.Modulo(s, mod, DivideMode.Classic);
@@ -216,7 +216,7 @@ namespace RSA
         public static int FindClosestPow(IntX number)
         {
             if (number == 1)
-                return 0;                
+                return 0;
             IntX _temp = 2;
             int power = 1;
             while (_temp <= number)
@@ -225,7 +225,7 @@ namespace RSA
                 power++;
             }
 
-            return power; 
+            return power;
         }
 
         public static IntX Modulo(IntX number, IntX mod)
@@ -236,17 +236,57 @@ namespace RSA
 
         public static void Test()
         {
-            // System.Console.WriteLine(MathAlgs.GCD(new IntX("284612834525939"), new IntX("161529830970143030971931")));
-            //System.Console.WriteLine(MathAlgs.GenerateCoprime(1257957, 13));
-            System.Console.WriteLine(MathAlgs.GenerateInverse(447, 235716571963));
-            //System.Console.WriteLine(FindClosestPow(1025));
-            //System.Console.WriteLine(GenerateBitArray(1024));
-            System.Console.WriteLine(Modulo(new IntX("15234723423412423423541203958230532402394234888888888823423059812904184290189421204124927349293152347234234124234235412039582305324023942348888888888234230598129041842901894212041249273492935623852351"), 47342342));
+            MontgomeryForm(99934, 23423497, 1938491);
+        }
 
+        public static Tuple<IntX, IntX> MontgomeryForm(IntX a, IntX b, IntX mod)
+        {
+            IntX R = 1;
+            int log = FindClosestPow(mod)-1;
+            do
+            {
+                log += 1;
+                R = IntX.Pow(new IntX(2), (uint)(log));
 
-            //for (int i = 0; i<256; i++)
-            //    System.Console.WriteLine("2^{0} = {1}",i,MathAlgs.MultiplicationSq(2, i, 23232));
-            //System.Console.Read();
+            } while (GCD(R, mod) != 1);
+
+            return ExtendedEuclidianAlgorithm(R, mod);
+
+        }
+
+        public static Tuple<IntX, IntX> ExtendedEuclidianAlgorithm(IntX A, IntX B)
+        {
+            IntX[] result = new IntX[3];
+            if (A < B) //if A less than B, switch them
+            {
+                IntX temp = A;
+                A = B;
+                B = temp;
+            }
+            IntX r = B;
+            IntX q = 0;
+            IntX x0 = 1;
+            IntX y0 = 0;
+            IntX x1 = 0;
+            IntX y1 = 1;
+            IntX x = 0, y = 0;
+            while (r > 1)
+            {
+                r = A % B;
+                q = A / B;
+                x = x0 - q * x1;
+                y = y0 - q * y1;
+                x0 = x1;
+                y0 = y1;
+                x1 = x;
+                y1 = y;
+                A = B;
+                B = r;
+            }
+           /* result[0] = r;
+            result[1] = x;
+            result[2] = y;-*/
+            return new Tuple<IntX, IntX>(x, y);
         }
     }
 }
