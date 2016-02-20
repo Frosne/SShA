@@ -13,8 +13,18 @@ namespace CRC
         {
             string text ="11010011101100";
             string key = "1011";
-            CRC crc = new CRC(text, key);
-            crc.CRCAlg(ref crc.ExtendedText, crc.Key);
+            string tr;
+            CRC crc = new CRC();
+            crc.CRCAlg(text, key, out tr);
+            System.Console.WriteLine(tr);
+            CRCBruteForce br = new CRCBruteForce("100", key, 14);
+            br.Search("100", key);
+
+            var test = br.found[0];
+            string res;
+            crc.CRCAlg(ref test, CRC.ToBitArray(key), out tr);
+
+
             System.Console.Read();
         }
     }
@@ -32,6 +42,12 @@ namespace CRC
            this.KeyExtended = new BitArray(Text.Length + Key.Length - 1);
         }
 
+        public CRC()
+        {
+           
+        }
+
+        
         public void ExtendToSizeRight(ref BitArray to, BitArray bitArray, int p)
         {
             if (to == null)
@@ -51,7 +67,7 @@ namespace CRC
             return to;
         }
 
-        public BitArray ToBitArray(string Text)
+        public static BitArray ToBitArray(string Text)
         {
             BitArray br = new BitArray(Text.Length);
             for (int i = 0; i < Text.Length; i++)
@@ -83,8 +99,11 @@ namespace CRC
 
         }
 
-        public void CRCAlg(ref BitArray to, BitArray key)
+        public BitArray CRCAlg(ref BitArray to, BitArray key , out string Truncated)
         {
+            this.Key = key;
+            this.ExtendedText = to;
+            Truncated = String.Empty;
             int size = to.Length;
             PrintBitArray(to);
             PrintBitArray(key);
@@ -93,9 +112,45 @@ namespace CRC
                 if (to[i] == true)
                 {
                     GenerateOneRound(ref to, key, to.Length - i - 1);
-                    PrintBitArray(to);
+                   // PrintBitArray(to);
                 }
             }
+
+            char[] temp = new char[this.Key.Length - 1];
+            for (int i = 0; i < temp.Length; i++)
+                temp[temp.Length - 1 - i] = to[i] == true ? '1' : '0';
+            Truncated = new String(temp);
+
+            return to;
+        }
+
+        public BitArray CRCAlg(out string Truncated)
+        { 
+            Truncated = String.Empty;
+            try
+            {
+               
+                return this.CRCAlg(ref this.ExtendedText, this.Key, out Truncated);
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex.Data);
+            }
+            return null;
+        }
+        public BitArray CRCAlg(string Text, string Key, out string Truncated)
+        {
+            Truncated = String.Empty;
+            ExtendToSizeLeft(ref this.ExtendedText, ToBitArray(Text), Text.Length + Key.Length - 1);
+            this.Key = ToBitArray(Key);
+            this.KeyExtended = new BitArray(Text.Length + Key.Length - 1);
+            var result = this.CRCAlg(ref this.ExtendedText, this.Key, out Truncated);
+
+            char[] temp = new char[this.Key.Length - 1];
+            for (int i = 0; i < temp.Length; i++)
+                temp[temp.Length - 1 - i] = result[i] == true ? '1' : '0';
+            Truncated = new String(temp);
+            return  result;
         }
 
     }
