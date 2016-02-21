@@ -11,21 +11,12 @@ namespace CRC
     {
         static void Main(string[] args)
         {
-            string text ="11010011101100";
-            string key = "1011";
+            string text = "1101011011";
+            string key = "10011";
             string tr;
             CRC crc = new CRC();
             crc.CRCAlg(text, key, out tr);
             System.Console.WriteLine(tr);
-            CRCBruteForce br = new CRCBruteForce("100", key, 14);
-            br.Search("100", key);
-
-            var test = br.found[0];
-            string res;
-            crc.CRCAlg(ref test, CRC.ToBitArray(key), out tr);
-
-
-            System.Console.Read();
         }
     }
 
@@ -107,12 +98,12 @@ namespace CRC
             int size = to.Length;
             PrintBitArray(to);
             PrintBitArray(key);
-            for (int i = to.Length-1; i > key.Length; i--)
+            for (int i = to.Length-1; i > key.Length-1; i--)
             {
                 if (to[i] == true)
                 {
                     GenerateOneRound(ref to, key, to.Length - i - 1);
-                   // PrintBitArray(to);
+                   PrintBitArray(to);
                 }
             }
 
