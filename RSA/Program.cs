@@ -14,11 +14,23 @@ namespace RSA
     {
         static void Main(string[] args)
         {
-            Helper hlr = new Helper();
-            hlr.HelperMain();
-
-            System.Console.Read();
+            RSA rsa = new RSA("10", 10, 0);
+            rsa.CipherFullGeneration();
+            var ciphered = rsa.DDMessage;
+            IntX result;
+            var cpowk = MathAlgs.Multiplication(ciphered, rsa.e, rsa.n);
+            for (int i = 1; i < rsa.n; i++)
+            {
+                var temp = MathAlgs.Multiplication(cpowk, i, rsa.n);
+                if (temp == ciphered)
+                {
+                    result = MathAlgs.Multiplication(cpowk, i - 1, rsa.n);
+                    break;
+                }
+            }
+            System.Console.WriteLine(ciphered);
             
+
            
         }
     }
