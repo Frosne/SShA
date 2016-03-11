@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TextParsing;
 
 namespace RSA
 {
@@ -19,7 +20,7 @@ namespace RSA
         public IntX n;
 
         public string MessageToCipherString;
-        public IntX MessageToCipherNumeric;
+        public List<IntX> MessageToCipherNumeric;
         public string MessageToDecipherString;
         public IntX MessageToDecipherNumeric;
         public IntX MessageDeciphered;
@@ -43,6 +44,7 @@ namespace RSA
         public RSA(string message, int bitsize, int securityLevel)
         {
             this.MessageToCipherString = message;
+            this.MessageToCipherNumeric = TextParsing.TextParsing.StringToNumericArray(this.MessageToCipherString);
             this.bitsize = bitsize;
             this.securityLevel = securityLevel;
         }
@@ -77,6 +79,7 @@ namespace RSA
 
         public void CipherFullCycle()
         {
+
             this.GeneratePQ();
             this.GenerateN();
             this.GeneratePhi();
