@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IntXLib;
+using System.Xml;
+using System.Diagnostics;
 
 namespace TextParsing
 {
@@ -35,10 +37,32 @@ namespace TextParsing
            return result;
        }
 
+       public static void XMLResponse(Process[] toWrite, Type type)
+       {
+           XmlWriterSettings settings = new XmlWriterSettings();
+           
+           settings.Async = true;
+           settings.CheckCharacters = false;
+           string path = @"D:/Alt/Cat/xml";
+           System.IO.DirectoryInfo dr= new System.IO.DirectoryInfo(path.Remove(path.LastIndexOf('/')));
+           if (!dr.Exists)
+               dr.Create();
+            
+           XmlWriter xml = XmlWriter.Create(path, settings);
+           xml.WriteStartDocument();
+           foreach (var elem in toWrite)
+           {
+               xml.WriteValue(elem.
+           }
+           xml.WriteEndDocument();
+           xml.Close();
+           
+       }
+
        static void Main(string[] args)
        {
-          var lst =  TextParsing.StringToNumericArray("hello world");
-          var result = TextParsing.NumericIntXArrayToString(lst);
+           LoggingExtensions.Logging.Log.InitializeWith<LoggingExtensions.log4net.Log4NetLog>();
+
        }
 
     }
