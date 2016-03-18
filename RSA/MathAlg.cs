@@ -288,5 +288,61 @@ namespace RSA
             result[2] = y;-*/
             return new Tuple<IntX, IntX>(x, y);
         }
+
+        public static IntX CRTAlgorithm(IntX Ciphered, IntX d, IntX n, IntX p, IntX q)
+        {
+            List<IntX> lst = MathAlgs.CRTAlgorithmPrecomputing(d, p, q);
+            IntX dp = 1, dq = 1, a = 1, b = 1;
+            try
+            {
+                dp = lst[0];
+                dq = lst[1];
+                a = lst[2];
+                b = lst[3];
+            }
+            catch (Exception exp)
+            {
+                System.Console.WriteLine("Some problems during generation pre parameters");
+            }
+
+            IntX Cp = IntX.Modulo(Ciphered, p, DivideMode.Classic);
+            IntX Cq = IntX.Modulo(Ciphered, q, DivideMode.Classic);
+
+            IntX Xp = MathAlgs.Multiplication(Cp, dp, p);
+            IntX Xq = MathAlgs.Multiplication(Cq, dq, q);
+
+            IntX result = IntX.Modulo((a * Xp + b * Xq), n, DivideMode.Classic);
+            return result;
+        }
+
+        /// <summary>
+        /// Compute dp, dq, a and b for CRT algorithm
+        /// </summary>
+        /// <param name="d">private key</param>
+        /// <param name="p">prime p</param>
+        /// <param name="q">prime q</param>
+        /// <returns>List<IntX> where the first element in list is dp, the second element is dq, followed by a and b</returns>
+        public static List<IntX> CRTAlgorithmPrecomputing(IntX d, IntX p, IntX q)
+        {
+            IntX dp = IntX.Modulo(d, new IntX(p - 1), DivideMode.Classic);
+            IntX dq = IntX.Modulo(d, new IntX(q - 1), DivideMode.Classic);
+            IntX a = 1;
+            IntX b = 1;
+
+            while (!((a % q) == 0))
+                a += p;
+
+            while (!(b % p == 0))
+                b += q;
+
+            List<IntX> lst = new List<IntX>();
+            lst.Add(dp);
+            lst.Add(dq);
+            lst.Add(a);
+            lst.Add(b);
+
+            return lst;
+
+        }
     }
 }
